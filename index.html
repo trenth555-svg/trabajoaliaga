@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aliaga Mendoza Ider A - Portfolio Profesional</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <h2>Aliaga Mendoza Ider A</h2>
+        </div>
+        <ul class="nav-menu">
+          <li><a href="#inicio" class="nav-link">Inicio</a></li>
+          <li><a href="#sobre-mi" class="nav-link">Sobre Mí</a></li>
+          <li><a href="#proyectos" class="nav-link">Proyectos</a></li>
+          <li><a href="#habilidades" class="nav-link">Habilidades</a></li>
+          <li><a href="#contacto" class="nav-link">Contacto</a></li>
+          <li class="admin-link" style="display: none;"><a href="#admin" class="nav-link admin-nav">Admin</a></li>
+        </ul>
+        <div class="nav-auth">
+          <button id="loginBtn" class="btn btn-login">
+            <i class="fas fa-sign-in-alt"></i>
+            Iniciar Sesión
+          </button>
+          <button id="logoutBtn" class="btn btn-logout" style="display: none;">
+            <i class="fas fa-sign-out-alt"></i>
+            Cerrar Sesión
+          </button>
+        </div>
+        <div class="hamburger">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeLoginModal()">&times;</span>
+      <h2>Iniciar Sesión</h2>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="username">Usuario</label>
+          <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-sign-in-alt"></i>
+          Iniciar Sesión
+        </button>
+      </form>
+      <div class="login-info">
+        <p><strong>Credenciales de prueba:</strong></p>
+        <p>Usuario: admin</p>
+        <p>Contraseña: admin123</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Panel Modal -->
+  <div id="adminModal" class="modal">
+    <div class="modal-content admin-modal">
+      <span class="close" onclick="closeAdminModal()">&times;</span>
+      <h2>Panel de Administración</h2>
+      <div class="admin-tabs">
+        <button class="tab-btn active" onclick="showTab('addProject')">Agregar Proyecto</button>
+        <button class="tab-btn" onclick="showTab('manageProjects')">Gestionar Proyectos</button>
+      </div>
+      
+      <!-- Add Project Tab -->
+      <div id="addProject" class="tab-content active">
+        <form id="addProjectForm" onsubmit="handleAddProject(event)" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="projectTitle">Título del Proyecto</label>
+            <input type="text" id="projectTitle" name="projectTitle" required>
+          </div>
+          <div class="form-group">
+            <label for="projectDescription">Descripción</label>
+            <textarea id="projectDescription" name="projectDescription" rows="3" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="projectDocument">Documento del Proyecto</label>
+            <div class="file-upload-container">
+              <input type="file" id="projectDocument" name="projectDocument" accept=".pdf,.doc,.docx" class="file-input" required>
+              <label for="projectDocument" class="file-upload-label">
+                <i class="fas fa-file-upload"></i>
+                <span>Subir PDF o Word</span>
+              </label>
+              <div class="file-preview" id="documentPreview"></div>
+            </div>
+            <small class="file-help">Formatos permitidos: PDF, DOC, DOCX</small>
+          </div>
+          <div class="form-group">
+            <label for="projectTags">Tags (separados por comas)</label>
+            <input type="text" id="projectTags" name="projectTags" placeholder="HTML, CSS, JavaScript" required>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-plus"></i>
+              Agregar Proyecto
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="resetForm()">
+              <i class="fas fa-undo"></i>
+              Limpiar Formulario
+            </button>
+          </div>
+        </form>
+      </div>
+      
+      <!-- Manage Projects Tab -->
+      <div id="manageProjects" class="tab-content">
+        <div class="projects-header">
+          <h3>Proyectos Existentes</h3>
+          <div class="search-container">
+            <input type="text" id="searchProjects" placeholder="Buscar proyectos..." class="search-input">
+            <i class="fas fa-search search-icon"></i>
+          </div>
+        </div>
+        <div id="projectsList" class="projects-list">
+          <!-- Projects will be loaded here dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section id="inicio" class="hero">
+    <div class="hero-container">
+      <div class="hero-content">
+        <h1 class="hero-title">Aliaga Mendoza Ider A</h1>
+        <p class="hero-subtitle">Desarrollador Web & Analista de Datos</p>
+        <p class="hero-description">Apasionado por crear soluciones tecnológicas innovadoras y experiencias digitales excepcionales.</p>
+        <div class="hero-buttons">
+          <a href="#proyectos" class="btn btn-primary">Ver Proyectos</a>
+          <a href="#contacto" class="btn btn-secondary">Contactar</a>
+        </div>
+      </div>
+      <div class="hero-image">
+        <div class="profile-card">
+          <div class="profile-avatar">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <div class="profile-info">
+            <h3>Desarrollador Full Stack</h3>
+            <p>Especializado en bases de datos y desarrollo web</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sobre Mí Section -->
+  <section id="sobre-mi" class="about">
+    <div class="container">
+      <div class="section-header">
+        <h2>Sobre Mí</h2>
+        <p>Conoce más sobre mi experiencia y pasión por la tecnología</p>
+      </div>
+      <div class="about-content">
+        <div class="about-text">
+          <h3>¿Quién soy?</h3>
+          <p>Soy un desarrollador web apasionado con experiencia en el desarrollo de aplicaciones web modernas y gestión de bases de datos. Mi enfoque se centra en crear soluciones funcionales, elegantes y escalables que resuelvan problemas reales.</p>
+          
+          <h3>Mi Experiencia</h3>
+          <p>He trabajado en diversos proyectos que incluyen desarrollo frontend, backend, y administración de bases de datos. Mi experiencia abarca desde la creación de interfaces de usuario intuitivas hasta la implementación de sistemas de gestión de datos robustos.</p>
+          
+          <div class="about-stats">
+            <div class="stat">
+              <h4>12+</h4>
+              <p>Proyectos Completados</p>
+            </div>
+            <div class="stat">
+              <h4>3+</h4>
+              <p>Años de Experiencia</p>
+            </div>
+            <div class="stat">
+              <h4>100%</h4>
+              <p>Compromiso</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Proyectos Section -->
+  <section id="proyectos" class="projects">
+    <div class="container">
+      <div class="section-header">
+        <h2>Mis Proyectos</h2>
+        <p>Una colección de mis trabajos más destacados</p>
+      </div>
+      
+      <div class="projects-grid" id="projectsGrid">
+        <!-- Proyecto 1 -->
+        <div class="project-card" data-project-id="1">
+          <div class="project-image">
+            <img src="img/semana1.png" alt="Semana 1">
+            <div class="project-overlay">
+              <div class="project-links">
+                <a href="img/Brown and White Minimalist Ceramic Product Catalogue Presentation (1).pdf" download class="project-link">
+                  <i class="fas fa-download"></i>
+                </a>
+                <button class="project-link admin-action" onclick="editProject(1)" style="display: none;">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="project-link admin-action" onclick="viewProject(1)" style="display: none;">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="project-link admin-action" onclick="deleteProject(1)" style="display: none;">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Semana 1</h3>
+            <p>Proyecto de desarrollo web y diseño de interfaces</p>
+            <div class="project-tags">
+              <span class="tag">HTML</span>
+              <span class="tag">CSS</span>
+              <span class="tag">JavaScript</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proyecto 2 -->
+        <div class="project-card" data-project-id="2">
+          <div class="project-image">
+            <img src="img/semana2.png" alt="Semana 2">
+            <div class="project-overlay">
+              <div class="project-links">
+                <a href="img/ACTIVIDAD_BD_SEMANA 2.pdf" download class="project-link">
+                  <i class="fas fa-download"></i>
+                </a>
+                <button class="project-link admin-action" onclick="editProject(2)" style="display: none;">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="project-link admin-action" onclick="viewProject(2)" style="display: none;">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="project-link admin-action" onclick="deleteProject(2)" style="display: none;">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Semana 2</h3>
+            <p>Desarrollo de aplicaciones web dinámicas</p>
+            <div class="project-tags">
+              <span class="tag">PHP</span>
+              <span class="tag">MySQL</span>
+              <span class="tag">Bootstrap</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proyecto 3 -->
+        <div class="project-card" data-project-id="3">
+          <div class="project-image">
+            <img src="img/semana3.png" alt="Semana 3">
+            <div class="project-overlay">
+              <div class="project-links">
+                <a href="img/ACTIVIDAD_BD_SEMANA 3.pdf" download class="project-link">
+                  <i class="fas fa-download"></i>
+                </a>
+                <button class="project-link admin-action" onclick="editProject(3)" style="display: none;">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="project-link admin-action" onclick="viewProject(3)" style="display: none;">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="project-link admin-action" onclick="deleteProject(3)" style="display: none;">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Semana 3</h3>
+            <p>Sistema de gestión de bases de datos</p>
+            <div class="project-tags">
+              <span class="tag">SQL</span>
+              <span class="tag">Database</span>
+              <span class="tag">Management</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proyecto 4 -->
+        <div class="project-card" data-project-id="4">
+          <div class="project-image">
+            <img src="img/semana4.png" alt="Semana 4">
+            <div class="project-overlay">
+              <div class="project-links">
+                <a href="img/RIVERA AUJATOMA CRISTIAN ESNAIDER_SEMANA 4.pdf" download class="project-link">
+                  <i class="fas fa-download"></i>
+                </a>
+                <button class="project-link admin-action" onclick="editProject(4)" style="display: none;">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="project-link admin-action" onclick="viewProject(4)" style="display: none;">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="project-link admin-action" onclick="deleteProject(4)" style="display: none;">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Semana 4</h3>
+            <p>Análisis y optimización de consultas SQL</p>
+            <div class="project-tags">
+              <span class="tag">SQL</span>
+              <span class="tag">Optimization</span>
+              <span class="tag">Performance</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proyecto 7 -->
+        <div class="project-card" data-project-id="7">
+          <div class="project-image">
+            <img src="img/semana7.png" alt="Semana 7">
+            <div class="project-overlay">
+              <div class="project-links">
+                <a href="img/CONSULTAS SOBRE UNA TABLA_semana 7.pdf" download class="project-link">
+                  <i class="fas fa-download"></i>
+                </a>
+                <button class="project-link admin-action" onclick="editProject(7)" style="display: none;">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="project-link admin-action" onclick="viewProject(7)" style="display: none;">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="project-link admin-action" onclick="deleteProject(7)" style="display: none;">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Semana 7</h3>
+            <p>Consultas avanzadas y reportes de datos</p>
+            <div class="project-tags">
+              <span class="tag">SQL</span>
+              <span class="tag">Queries</span>
+              <span class="tag">Reports</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proyecto 9 -->
+        <div class="project-card" data-project-id="9">
+          <div class="project-image">
+            <img src="img/semana9.png" alt="Semana 9">
+            <div class="project-overlay">
+              <div class="project-links">
+                <a href="img/PRACTICA_BASE DE DATOS_SEMANA 9.pdf" download class="project-link">
+                  <i class="fas fa-download"></i>
+                </a>
+                <button class="project-link admin-action" onclick="editProject(9)" style="display: none;">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="project-link admin-action" onclick="viewProject(9)" style="display: none;">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="project-link admin-action" onclick="deleteProject(9)" style="display: none;">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Semana 9</h3>
+            <p>Prácticas avanzadas de bases de datos</p>
+            <div class="project-tags">
+              <span class="tag">Database</span>
+              <span class="tag">Practice</span>
+              <span class="tag">Advanced</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proyecto 10 -->
+        <div class="project-card" data-project-id="10">
+          <div class="project-image">
+            <img src="img/semana10.png" alt="Semana 10">
+            <div class="project-overlay">
+              <div class="project-links">
+                <a href="img/base de datos tarea.pdf" download class="project-link">
+                  <i class="fas fa-download"></i>
+                </a>
+                <button class="project-link admin-action" onclick="editProject(10)" style="display: none;">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="project-link admin-action" onclick="viewProject(10)" style="display: none;">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="project-link admin-action" onclick="deleteProject(10)" style="display: none;">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Semana 10</h3>
+            <p>Desarrollo de aplicaciones con bases de datos</p>
+            <div class="project-tags">
+              <span class="tag">Application</span>
+              <span class="tag">Database</span>
+              <span class="tag">Development</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proyecto 11 -->
+        <div class="project-card" data-project-id="11">
+          <div class="project-image">
+            <img src="img/semana11.png" alt="Semana 11">
+            <div class="project-overlay">
+              <div class="project-links">
+                <a href="img/instalacion sql server.pdf" download class="project-link">
+                  <i class="fas fa-download"></i>
+                </a>
+                <button class="project-link admin-action" onclick="editProject(11)" style="display: none;">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="project-link admin-action" onclick="viewProject(11)" style="display: none;">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="project-link admin-action" onclick="deleteProject(11)" style="display: none;">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Semana 11</h3>
+            <p>Instalación y configuración de SQL Server</p>
+            <div class="project-tags">
+              <span class="tag">SQL Server</span>
+              <span class="tag">Installation</span>
+              <span class="tag">Configuration</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proyecto 12 -->
+        <div class="project-card" data-project-id="12">
+          <div class="project-image">
+            <img src="img/semana12.png" alt="Semana 12">
+            <div class="project-overlay">
+              <div class="project-links">
+                <a href="img/Manual de Instalación y Configuración de Microsoft Azure.pdf" download class="project-link">
+                  <i class="fas fa-download"></i>
+                </a>
+                <button class="project-link admin-action" onclick="editProject(12)" style="display: none;">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="project-link admin-action" onclick="viewProject(12)" style="display: none;">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="project-link admin-action" onclick="deleteProject(12)" style="display: none;">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Semana 12</h3>
+            <p>Microsoft Azure: Instalación y configuración</p>
+            <div class="project-tags">
+              <span class="tag">Azure</span>
+              <span class="tag">Cloud</span>
+              <span class="tag">Microsoft</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proyecto 13 -->
+        <div class="project-card" data-project-id="13">
+          <div class="project-image">
+            <img src="img/semana13.png" alt="Semana 13">
+            <div class="project-overlay">
+              <div class="project-links">
+                <a href="img/Ejercicios_SQLServer-Rivera Aujatoma Cristian Esnaider.pdf" download class="project-link">
+                  <i class="fas fa-download"></i>
+                </a>
+                <button class="project-link admin-action" onclick="editProject(13)" style="display: none;">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="project-link admin-action" onclick="viewProject(13)" style="display: none;">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="project-link admin-action" onclick="deleteProject(13)" style="display: none;">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Semana 13</h3>
+            <p>Ejercicios avanzados de SQL Server</p>
+            <div class="project-tags">
+              <span class="tag">SQL Server</span>
+              <span class="tag">Exercises</span>
+              <span class="tag">Advanced</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Habilidades Section -->
+  <section id="habilidades" class="skills">
+    <div class="container">
+      <div class="section-header">
+        <h2>Mis Habilidades</h2>
+        <p>Technologías y herramientas que domino</p>
+      </div>
+      
+      <div class="skills-grid">
+        <div class="skill-category">
+          <h3>Desarrollo Frontend</h3>
+          <div class="skill-items">
+            <div class="skill-item">
+              <i class="fab fa-html5"></i>
+              <span>HTML5</span>
+            </div>
+            <div class="skill-item">
+              <i class="fab fa-css3-alt"></i>
+              <span>CSS3</span>
+            </div>
+            <div class="skill-item">
+              <i class="fab fa-js"></i>
+              <span>JavaScript</span>
+            </div>
+            <div class="skill-item">
+              <i class="fab fa-bootstrap"></i>
+              <span>Bootstrap</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <h3>Desarrollo Backend</h3>
+          <div class="skill-items">
+            <div class="skill-item">
+              <i class="fab fa-php"></i>
+              <span>PHP</span>
+            </div>
+            <div class="skill-item">
+              <i class="fas fa-database"></i>
+              <span>MySQL</span>
+            </div>
+            <div class="skill-item">
+              <i class="fas fa-server"></i>
+              <span>SQL Server</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <h3>Herramientas & Cloud</h3>
+          <div class="skill-items">
+            <div class="skill-item">
+              <i class="fab fa-git-alt"></i>
+              <span>Git</span>
+            </div>
+            <div class="skill-item">
+              <i class="fab fa-microsoft"></i>
+              <span>Azure</span>
+            </div>
+            <div class="skill-item">
+              <i class="fas fa-cloud"></i>
+              <span>Cloud Computing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contacto Section -->
+  <section id="contacto" class="contact">
+    <div class="container">
+      <div class="section-header">
+        <h2>Contáctame</h2>
+        <p>¿Tienes un proyecto en mente? ¡Hablemos!</p>
+      </div>
+      
+      <div class="contact-content">
+        <div class="contact-info">
+          <div class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <div>
+              <h4>Email</h4>
+              <p>contacto@aliaga.com</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-phone"></i>
+            <div>
+              <h4>Teléfono</h4>
+              <p>+51 999 999 999</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <div>
+              <h4>Ubicación</h4>
+              <p>Lima, Perú</p>
+            </div>
+          </div>
+        </div>
+        
+        <form class="contact-form" onsubmit="handleContactSubmit(event)">
+          <div class="form-group">
+            <label for="nombre">Nombre completo</label>
+            <input type="text" id="nombre" name="nombre" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="asunto">Asunto</label>
+            <input type="text" id="asunto" name="asunto" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="mensaje">Mensaje</label>
+            <textarea id="mensaje" name="mensaje" rows="5" required></textarea>
+          </div>
+          
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-paper-plane"></i>
+            Enviar Mensaje
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Aliaga Mendoza Ider A</h3>
+          <p>Desarrollador web apasionado por crear soluciones tecnológicas innovadoras.</p>
+        </div>
+        
+        <div class="footer-section">
+          <h4>Enlaces Rápidos</h4>
+          <ul>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#sobre-mi">Sobre Mí</a></li>
+            <li><a href="#proyectos">Proyectos</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h4>Sígueme</h4>
+          <div class="social-links">
+            <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2025 Aliaga Mendoza Ider A. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
